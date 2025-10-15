@@ -37,7 +37,7 @@ runs:
       id: process-artifacts
       run: |
         $scriptPath = Join-Path ${{ github.action_path }} "scripts/Process-Artifacts.ps1"
-        & $scriptPath -ArtifactsInput "${{ inputs.success-artifact-ids }}"
+        & $scriptPath -ArtifactsInput '${{ inputs.success-artifact-ids }}'
       shell: pwsh
 
     - name: Generate System Stage Summary
