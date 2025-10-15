@@ -10,30 +10,27 @@ $formattedArtifacts = ""
 if (-not [string]::IsNullOrWhiteSpace($ArtifactsInput)) {
     Write-Host "📦 Input received: $ArtifactsInput" -ForegroundColor Yellow
     
-    # Check if input is JSON array format
+    # Only accept JSON array format
     try {
-        $jsonTest = $ArtifactsInput | ConvertFrom-Json -ErrorAction Stop
-        if ($jsonTest -is [array]) {
-            Write-Host "✅ Detected JSON array format" -ForegroundColor Green
+        $jsonArray = $ArtifactsInput | ConvertFrom-Json -ErrorAction Stop
+        if ($jsonArray -is [array] -or ($jsonArray -is [string] -and $jsonArray.Count -eq 1)) {
+            Write-Host "✅ Valid JSON array format detected" -ForegroundColor Green
+            # Ensure we always work with an array, even if single item
+            if ($jsonArray -is [string]) {
+                $jsonArray = @($jsonArray)
+            }
             # Process JSON array - convert to formatted list
-            $formattedArtifacts = ($jsonTest | ForEach-Object { "• $_" }) -join "`n"
+            $formattedArtifacts = ($jsonArray | ForEach-Object { "• $_" }) -join "`n"
         } else {
-            throw "Not an array"
+            Write-Host "❌ Error: Input must be a JSON array. Expected format: [""value""] or [""value1"", ""value2""]" -ForegroundColor Red
+            throw "Invalid format: Expected JSON array"
         }
     } catch {
-        Write-Host "📦 Not JSON array format, trying other formats..." -ForegroundColor Yellow
-        
-        # Fallback: treat as single string or comma-delimited
-        if ($ArtifactsInput.Contains(",")) {
-            Write-Host "✅ Detected comma-delimited format" -ForegroundColor Green
-            # Comma-delimited - convert to list format
-            $artifactArray = $ArtifactsInput -split "," | ForEach-Object { $_.Trim() }
-            $formattedArtifacts = ($artifactArray | ForEach-Object { "• $_" }) -join "`n"
-        } else {
-            Write-Host "✅ Detected single artifact format" -ForegroundColor Green
-            # Single artifact
-            $formattedArtifacts = "• $ArtifactsInput"
-        }
+        Write-Host "❌ Error: Invalid JSON array format. Expected format: [""artifact1"", ""artifact2""]" -ForegroundColor Red
+        Write-Host "Examples:" -ForegroundColor Yellow
+        Write-Host "  Single artifact: [""docker.io/myapp:v1.2.3""]" -ForegroundColor White
+        Write-Host "  Multiple artifacts: [""docker.io/myapp:v1.2.3"", ""https://github.com/owner/repo/releases/tag/v1.2.3""]" -ForegroundColor White
+        throw "Invalid JSON array format: $($_.Exception.Message)"
     }
     
     Write-Host "📋 Formatted artifacts:" -ForegroundColor Cyan

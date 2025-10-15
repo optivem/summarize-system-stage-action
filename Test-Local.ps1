@@ -3,7 +3,7 @@
 
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("json-array", "comma-delimited", "single-artifact", "empty-artifacts", "failed-stage", "all")]
+    [ValidateSet("json-array-multiple", "json-array-single", "empty-artifacts", "failed-stage", "all")]
     [string]$TestScenario = "all"
 )
 
@@ -89,9 +89,9 @@ function Test-Scenario {
 # Test scenarios
 $scenarios = @()
 
-if ($TestScenario -eq "all" -or $TestScenario -eq "json-array") {
+if ($TestScenario -eq "all" -or $TestScenario -eq "json-array-multiple") {
     $scenarios += @{
-        Name = "JSON Array Format"
+        Name = "JSON Array Format (Multiple Artifacts)"
         StageName = "Acceptance"
         StageResult = "success"
         Environment = "acceptance-env"
@@ -100,25 +100,14 @@ if ($TestScenario -eq "all" -or $TestScenario -eq "json-array") {
     }
 }
 
-if ($TestScenario -eq "all" -or $TestScenario -eq "comma-delimited") {
+if ($TestScenario -eq "all" -or $TestScenario -eq "json-array-single") {
     $scenarios += @{
-        Name = "Comma-Delimited Format"
-        StageName = "QA"
-        StageResult = "success"
-        Environment = "qa-env"
-        SuccessVersion = "v1.2.3-beta.1"
-        SuccessArtifactIds = "docker.io/myapp:v1.2.3-beta.1, https://github.com/owner/repo/releases/tag/v1.2.3-beta.1"
-    }
-}
-
-if ($TestScenario -eq "all" -or $TestScenario -eq "single-artifact") {
-    $scenarios += @{
-        Name = "Single Artifact Format"
+        Name = "JSON Array Format (Single Artifact)"
         StageName = "Production"
         StageResult = "success"
         Environment = "prod"
         SuccessVersion = "v1.2.3"
-        SuccessArtifactIds = "docker.io/myapp:v1.2.3"
+        SuccessArtifactIds = '["docker.io/myapp:v1.2.3"]'
     }
 }
 

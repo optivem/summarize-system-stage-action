@@ -9,21 +9,20 @@ on:
         default: 'json-array'
         type: choice
         options:
-          - json-array
-          - comma-delimited
-          - single-artifact
+          - json-array-multiple
+          - json-array-single
           - empty-artifacts
           - failed-stage
 
 jobs:
-  test-json-array:
-    if: ${{ github.event.inputs.test-scenario == 'json-array' }}
+  test-json-array-multiple:
+    if: ${{ github.event.inputs.test-scenario == 'json-array-multiple' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Test JSON Array Format
+      - name: Test JSON Array Format (Multiple Artifacts)
         uses: ./
         with:
           stage-name: 'Acceptance'
@@ -32,37 +31,21 @@ jobs:
           success-version: 'v1.2.3-rc.1'
           success-artifact-ids: '["docker.io/myapp:v1.2.3-rc.1", "https://github.com/owner/repo/releases/tag/v1.2.3-rc.1", "https://artifacts.example.com/myapp-v1.2.3.tar.gz"]'
 
-  test-comma-delimited:
-    if: ${{ github.event.inputs.test-scenario == 'comma-delimited' }}
+  test-json-array-single:
+    if: ${{ github.event.inputs.test-scenario == 'json-array-single' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Test Comma-Delimited Format
-        uses: ./
-        with:
-          stage-name: 'QA'
-          stage-result: 'success'
-          environment: 'qa-env'
-          success-version: 'v1.2.3-beta.1'
-          success-artifact-ids: 'docker.io/myapp:v1.2.3-beta.1, https://github.com/owner/repo/releases/tag/v1.2.3-beta.1'
-
-  test-single-artifact:
-    if: ${{ github.event.inputs.test-scenario == 'single-artifact' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Test Single Artifact Format
+      - name: Test JSON Array Format (Single Artifact)
         uses: ./
         with:
           stage-name: 'Production'
           stage-result: 'success'
           environment: 'prod'
           success-version: 'v1.2.3'
-          success-artifact-ids: 'docker.io/myapp:v1.2.3'
+          success-artifact-ids: '["docker.io/myapp:v1.2.3"]'
 
   test-empty-artifacts:
     if: ${{ github.event.inputs.test-scenario == 'empty-artifacts' }}

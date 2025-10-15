@@ -20,7 +20,7 @@ inputs:
     description: 'The version created on success (e.g., prerelease version)'
     required: false
   success-artifact-ids:
-    description: 'The artifact IDs created on success as JSON array (e.g., ["docker.io/myapp:v1.2.3", "https://github.com/owner/repo/releases/tag/v1.2.3"])'
+    description: 'The artifact IDs created on success as JSON array. Single artifacts must also be in array format: ["artifact"]. Multiple artifacts: ["artifact1", "artifact2"]'
     required: false
 
 

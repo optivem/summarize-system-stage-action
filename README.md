@@ -31,7 +31,7 @@ A GitHub Action that creates comprehensive summaries of system stage execution r
 | `stage-result` | Overall result of the stage (success/failure/skipped) | ✅ | - |
 | `environment` | The environment name for this stage | ✅ | - |
 | `success-version` | The version created on success (e.g., prerelease version) | ❌* | - |
-| `success-artifact-ids` | The artifact IDs created on success as JSON array (e.g., ["docker.io/myapp:v1.2.3"]) | ❌ | - |
+| `success-artifact-ids` | The artifact IDs created on success as JSON array. Single: ["artifact"], Multiple: ["artifact1", "artifact2"] | ❌ | - |
 
 *Required when `stage-result` is 'success'
 
@@ -39,19 +39,12 @@ A GitHub Action that creates comprehensive summaries of system stage execution r
 
 ### success-artifact-ids
 
-This input supports multiple formats for maximum flexibility:
+This input accepts **JSON arrays only** for consistency and reliability:
 
-1. **JSON Array (Recommended)**: `'["artifact1", "artifact2", "artifact3"]'`
-   - Best for programmatic generation
-   - Handles complex URLs and special characters safely
-   - Formats as a bulleted list in the summary
-
-2. **Comma-delimited (Legacy)**: `'artifact1, artifact2, artifact3'`
-   - Backward compatible with existing workflows
-   - Automatically converted to bulleted list format
-
-3. **Single Artifact**: `'single-artifact'`
-   - For workflows with only one artifact
+**JSON Array Format** (Required): `'["artifact1", "artifact2", "artifact3"]'`
+- Safe handling of complex URLs and special characters
+- Formats as a clean bulleted list in the summary
+- Single artifacts must also use array format: `'["single-artifact"]'`
 
 ## Examples
 
@@ -87,7 +80,7 @@ This input supports multiple formats for maximum flexibility:
     environment: 'acceptance-env'
 ```
 
-### Multiple Artifacts (JSON Array - Recommended)
+### Multiple Artifacts (JSON Array)
 ```yaml
 - name: Summarize with Multiple Artifacts
   uses: optivem/summarize-system-stage-action@v1
@@ -105,16 +98,16 @@ This input supports multiple formats for maximum flexibility:
       ]
 ```
 
-### Backward Compatibility (Comma-delimited)
+### Single Artifact (JSON Array)
 ```yaml
-- name: Summarize with Legacy Format
+- name: Summarize with Single Artifact
   uses: optivem/summarize-system-stage-action@v1
   with:
-    stage-name: 'Production'
+    stage-name: 'Staging'
     stage-result: 'success'
-    environment: 'prod'
-    success-version: 'v1.2.3'
-    success-artifact-ids: 'docker.io/myapp:v1.2.3, https://github.com/owner/repo/releases/tag/v1.2.3'
+    environment: 'staging'
+    success-version: 'v1.2.3-rc.1'
+    success-artifact-ids: '["docker.io/myapp:v1.2.3-rc.1"]'
 ```
 
 ## Dependencies
