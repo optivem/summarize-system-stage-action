@@ -29,52 +29,16 @@ runs:
   steps:
     - name: Validate Inputs
       run: |
-        if [[ "${{ inputs.stage-result }}" == "success" ]]; then
-          if [[ -z "${{ inputs.success-version }}" ]]; then
-            echo "❌ Error: success-version is required when stage-result is 'success'"
-            exit 1
-          fi
-          echo "✅ Validation passed: success-version is provided for successful stage"
-        else
-          echo "ℹ️ Stage result is '${{ inputs.stage-result }}', skipping success validation"
-        fi
-      shell: bash
+        $scriptPath = Join-Path ${{ github.action_path }} "scripts/Validate-Inputs.ps1"
+        & $scriptPath -StageResult "${{ inputs.stage-result }}" -SuccessVersion "${{ inputs.success-version }}"
+      shell: pwsh
 
     - name: Process Artifact IDs
       id: process-artifacts
       run: |
-        artifacts_input='${{ inputs.success-artifact-ids }}'
-        
-        if [[ -n "$artifacts_input" ]]; then
-          # Check if input is JSON array format
-          if echo "$artifacts_input" | jq empty 2>/dev/null && echo "$artifacts_input" | jq -e 'type == "array"' >/dev/null 2>&1; then
-            # Process JSON array - convert to formatted list
-            formatted_artifacts=$(echo "$artifacts_input" | jq -r '.[] | "• " + .')
-            echo "artifacts-formatted<<EOF" >> $GITHUB_OUTPUT
-            echo "$formatted_artifacts" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          else
-            # Fallback: treat as single string or comma-delimited
-            if [[ "$artifacts_input" == *","* ]]; then
-              # Comma-delimited - convert to list format
-              IFS=',' read -ra artifact_array <<< "$artifacts_input"
-              formatted_artifacts=""
-              for artifact in "${artifact_array[@]}"; do
-                trimmed_artifact=$(echo "$artifact" | xargs)  # trim whitespace
-                formatted_artifacts+="• $trimmed_artifact"$'\n'
-              done
-              echo "artifacts-formatted<<EOF" >> $GITHUB_OUTPUT
-              echo "${formatted_artifacts%$'\n'}" >> $GITHUB_OUTPUT  # remove trailing newline
-              echo "EOF" >> $GITHUB_OUTPUT
-            else
-              # Single artifact
-              echo "artifacts-formatted=• $artifacts_input" >> $GITHUB_OUTPUT
-            fi
-          fi
-        else
-          echo "artifacts-formatted=" >> $GITHUB_OUTPUT
-        fi
-      shell: bash
+        $scriptPath = Join-Path ${{ github.action_path }} "scripts/Process-Artifacts.ps1"
+        & $scriptPath -ArtifactsInput "${{ inputs.success-artifact-ids }}"
+      shell: pwsh
 
     - name: Generate System Stage Summary
       uses: optivem/summarize-stage-action@v1

@@ -1,0 +1,94 @@
+name: Test Summarize System Stage Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      test-scenario:
+        description: 'Test scenario to run'
+        required: true
+        default: 'json-array'
+        type: choice
+        options:
+          - json-array
+          - comma-delimited
+          - single-artifact
+          - empty-artifacts
+          - failed-stage
+
+jobs:
+  test-json-array:
+    if: ${{ github.event.inputs.test-scenario == 'json-array' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Test JSON Array Format
+        uses: ./
+        with:
+          stage-name: 'Acceptance'
+          stage-result: 'success'
+          environment: 'acceptance-env'
+          success-version: 'v1.2.3-rc.1'
+          success-artifact-ids: '["docker.io/myapp:v1.2.3-rc.1", "https://github.com/owner/repo/releases/tag/v1.2.3-rc.1", "https://artifacts.example.com/myapp-v1.2.3.tar.gz"]'
+
+  test-comma-delimited:
+    if: ${{ github.event.inputs.test-scenario == 'comma-delimited' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Test Comma-Delimited Format
+        uses: ./
+        with:
+          stage-name: 'QA'
+          stage-result: 'success'
+          environment: 'qa-env'
+          success-version: 'v1.2.3-beta.1'
+          success-artifact-ids: 'docker.io/myapp:v1.2.3-beta.1, https://github.com/owner/repo/releases/tag/v1.2.3-beta.1'
+
+  test-single-artifact:
+    if: ${{ github.event.inputs.test-scenario == 'single-artifact' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Test Single Artifact Format
+        uses: ./
+        with:
+          stage-name: 'Production'
+          stage-result: 'success'
+          environment: 'prod'
+          success-version: 'v1.2.3'
+          success-artifact-ids: 'docker.io/myapp:v1.2.3'
+
+  test-empty-artifacts:
+    if: ${{ github.event.inputs.test-scenario == 'empty-artifacts' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Test Empty Artifacts
+        uses: ./
+        with:
+          stage-name: 'Staging'
+          stage-result: 'success'
+          environment: 'staging'
+          success-version: 'v1.2.3-alpha.1'
+
+  test-failed-stage:
+    if: ${{ github.event.inputs.test-scenario == 'failed-stage' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Test Failed Stage
+        uses: ./
+        with:
+          stage-name: 'Integration'
+          stage-result: 'failure'
+          environment: 'integration-env'
