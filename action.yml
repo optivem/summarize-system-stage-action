@@ -1,0 +1,48 @@
+name: 'Summarize System Stage'
+description: 'Creates a comprehensive summary of system stage execution results'
+
+inputs:
+  stage-name:
+    description: 'The name of the stage (e.g., Acceptance, QA, Production)'
+    required: true
+  stage-result:
+    description: 'Overall result of the stage (success/failure/skipped)'
+    required: true
+  environment:
+    description: 'The environment name for this stage'
+    required: true
+  success-version:
+    description: 'The version created on success (e.g., prerelease version)'
+    required: false
+  success-artifact-ids:
+    description: 'The artifact IDs created on success (e.g., image URLs, release URLs)'
+    required: false
+
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate Inputs
+      run: |
+        if [[ "${{ inputs.stage-result }}" == "success" ]]; then
+          if [[ -z "${{ inputs.success-version }}" ]]; then
+            echo "❌ Error: success-version is required when stage-result is 'success'"
+            exit 1
+          fi
+          echo "✅ Validation passed: success-version is provided for successful stage"
+        else
+          echo "ℹ️ Stage result is '${{ inputs.stage-result }}', skipping success validation"
+        fi
+      shell: bash
+
+    - name: Generate System Stage Summary
+      uses: optivem/summarize-stage-action@v1
+      with:
+        stage-name: ${{ inputs.stage-name }}
+        stage-result: ${{ inputs.stage-result }}
+        stage-content: |
+          🌍 **Environment:** ${{ inputs.environment }}
+        stage-success-content: |
+          🎯 **Release Candidate:** ${{ inputs.success-version }}
+          
+          ${{ inputs.success-artifact-ids && format('🔗 **Artifacts:** {0}', inputs.success-artifact-ids) || '' }}
