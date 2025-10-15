@@ -1,5 +1,10 @@
 name: 'Summarize System Stage'
-description: 'Creates a comprehensive summary of system stage execution results'
+description: 'Creates a comprehensive summary of system stage execution results for CI/CD pipelines'
+author: 'Optivem'
+
+branding:
+  icon: 'clipboard'
+  color: 'blue'
 
 inputs:
   stage-name:
