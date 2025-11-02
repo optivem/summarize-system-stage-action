@@ -1,5 +1,7 @@
 # Summarize System Stage Action
 
+[![Release](https://github.com/optivem/find-latest-docker-images-action/actions/workflows/release.yml/badge.svg)](https://github.com/optivem/find-latest-docker-images-action/actions/workflows/release.yml)
+
 A GitHub Action that creates comprehensive summaries of system stage execution results, perfect for CI/CD pipelines that need to track deployment stages across different environments.
 
 ## Features
