@@ -3,6 +3,7 @@
 [![Release](https://github.com/optivem/find-latest-docker-images-action/actions/workflows/release.yml/badge.svg)](https://github.com/optivem/find-latest-docker-images-action/actions/workflows/release.yml)
 
 [![GitHub release](https://img.shields.io/github/release/optivem/summarize-system-stage-action.svg)](https://github.com/optivem/summarize-system-stage-action/releases)
+[![GitHub](https://img.shields.io/github/license/optivem/summarize-system-stage-action)](LICENSE)
 
 A GitHub Action that creates comprehensive summaries of system stage execution results, perfect for CI/CD pipelines that need to track deployment stages across different environments.
 
