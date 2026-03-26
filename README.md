@@ -1,3 +1,6 @@
+> [!WARNING]
+> This action has moved to [optivem/actions](https://github.com/optivem/actions). Use `optivem/actions/summarize-system-stage@v1` instead.
+
 # Summarize System Stage Action
 
 [![Release](https://github.com/optivem/find-latest-docker-images-action/actions/workflows/release.yml/badge.svg)](https://github.com/optivem/find-latest-docker-images-action/actions/workflows/release.yml)
